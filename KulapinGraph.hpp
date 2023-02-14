@@ -2,6 +2,11 @@
  *   Copyright (c) 2023 
  *   All rights reserved.
  */
+
+#ifndef KULAPINGRAPH_HPP_
+#define KULAPINGRAPH_HPP_
+
+
 #include <iostream>
 #include <queue>
 #include <vector>
@@ -38,8 +43,7 @@ class AbstractGraph {
 
 
 namespace graph {
-template <typename Vertex = int,
-          typename Edge = DefaultEdge<Vertex>>
+template <typename Vertex = int, typename Edge = DefaultEdge<Vertex>>
 class AdjacencyListGraph : public AbstractGraph<Vertex, Edge> {
  public:
   AdjacencyListGraph(size_t vertices_num, const std::vector<Edge>& edges) :
@@ -115,3 +119,7 @@ void BreadthFirstSearch(Vertex origin_vertex, const Graph &graph,
   }
 }
 }  // namespace traverses
+
+
+#endif  // KULAPINGRAPH_HPP_
+
