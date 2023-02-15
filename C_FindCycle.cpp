@@ -3,7 +3,6 @@
 #include <utility>
 #include <unordered_map>
 
-typedef VertexType type;
 template <typename Vertex, typename Edge = std::pair<Vertex, Vertex>>
 class AbstractGraph {
  public:
@@ -71,7 +70,7 @@ bool FindCycleDFS(VType& from, Graph* graph,
   return false;
 }
 
-template <typename Graph, typename VType = type>
+template <typename Graph, typename VType = typename Graph::VertexType>
 std::vector<VType> GetCycle(Graph* graph) {
   std::unordered_map<VType, Color> colors;
   std::vector<VType> cycle;
