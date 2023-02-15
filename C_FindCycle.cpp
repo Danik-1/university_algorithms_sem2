@@ -3,6 +3,7 @@
 #include <utility>
 #include <unordered_map>
 
+typedef VertexType type;
 template <typename Vertex, typename Edge = std::pair<Vertex, Vertex>>
 class AbstractGraph {
  public:
@@ -59,21 +60,21 @@ bool FindCycleDFS(VType& from, Graph* graph,
                   std::vector<VType>* parents) {
   colors[from] = grey;
   for (auto v : graph->GetNeighbours(from)) {
-    if ((colors[v] == white && FindCycleDFS(v, graph, colors, parents))
-        || colors[v] == grey) {
+    if (colors[v] == grey ||
+        (colors[v] == white && FindCycleDFS(v, graph, colors, parents))) {
       parents->push_back(v);
       return true;
     }
   }
-  parents->pop_back();
+  parents->clear();
   colors[from] = black;
   return false;
 }
 
-template <typename Graph, typename VType = typename Graph::VertexType>
+template <typename Graph, typename VType = type>
 std::vector<VType> GetCycle(Graph* graph) {
   std::unordered_map<VType, Color> colors;
-  std::vector<VType> cycle{};
+  std::vector<VType> cycle;
 
   for (size_t i = 1; i <= graph->GetVerticesNumber(); ++i)
     if (colors[i] == white && FindCycleDFS(i, graph, colors, &cycle))
@@ -87,7 +88,9 @@ void PrintCycle(const std::vector<VType>& cycle) {
     std::cout << "NO";
   } else {
     std::cout << "YES" << "\n";
-    for (size_t j = 0; j < cycle.size(); ++j)
+
+    std::cout << cycle[0] << " ";
+    for (int j = cycle.size() - 1; j > 0; --j)
       std::cout << cycle[j] << " ";
   }
 }
