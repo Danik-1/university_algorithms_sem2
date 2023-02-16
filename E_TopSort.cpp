@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <utility>
@@ -37,10 +38,9 @@ class ListGraph : public AbstractGraph<Vertex, Edge> {
   std::unordered_map<Vertex, std::vector<Vertex>> list_;
 };
 
-
 template <typename T = size_t>
 std::vector<std::pair<T, T>> GetEdges(const size_t& edges_number) {
-  std::vector<std::pair<size_t, size_t>> edges(edges_number);
+  std::vector<std::pair<T, T>> edges(edges_number);
   for (size_t i = 0; i < edges_number; ++i)
     std::cin >> edges[i].first >> edges[i].second;
 
@@ -54,52 +54,48 @@ enum Color {
 };
 
 template <typename Graph, typename VType = typename Graph::VertexType>
-bool FindCycleDFS(VType& from, Graph* graph,
-                  std::unordered_map<VType, Color>& colors,
-                  std::vector<VType>* parents) {
+bool DFS(const VType& from, Graph* graph, std::vector<VType>* reverse_sorted,
+         std::unordered_map<VType, Color>& colors) {
   colors[from] = grey;
   for (auto v : graph->GetNeighbours(from)) {
     if (colors[v] == grey ||
-        (colors[v] == white && FindCycleDFS(v, graph, colors, parents))) {
-      parents->push_back(v);
+        (colors[v] == white && DFS(v, graph, reverse_sorted, colors)))
       return true;
-    }
   }
-  parents->pop_back();
   colors[from] = black;
+  reverse_sorted->push_back(from);
   return false;
 }
 
 template <typename Graph, typename VType = typename Graph::VertexType>
-std::vector<VType> GetCycle(Graph* graph) {
+std::vector<VType> TopSort(Graph* graph) {
   std::unordered_map<VType, Color> colors;
-  std::vector<VType> cycle;
+  std::vector<VType> reverse_sorted;
 
   for (size_t i = 1; i <= graph->GetVerticesNumber(); ++i)
-    if (colors[i] == white && FindCycleDFS(i, graph, colors, &cycle))
-      return cycle;
-  return {};
+    if (colors[i] == white && DFS(i, graph, &reverse_sorted, colors))
+      return {};
+
+  std::reverse(reverse_sorted.begin(), reverse_sorted.end());
+  return reverse_sorted;
 }
 
 template <typename VType = size_t>
-void PrintCycle(const std::vector<VType>& cycle) {
-  if (cycle.empty()) {
-    std::cout << "NO";
+void Print(std::vector<VType> sorted_vertexes) {
+  if (sorted_vertexes.empty()) {
+    std::cout << -1;
   } else {
-    std::cout << "YES" << "\n";
-
-    std::cout << cycle[0] << " ";
-    for (int j = cycle.size() - 1; j > 0; --j)
-      std::cout << cycle[j] << " ";
+    for (size_t j = 0; j < sorted_vertexes.size(); ++j)
+      std::cout << sorted_vertexes[j] << " ";
   }
 }
 
 
 int main() {
-  size_t vertecies_number = 0;
+  size_t vertexes_number = 0;
   size_t edges_number = 0;
-  std::cin >> vertecies_number >> edges_number;
+  std::cin >> vertexes_number >> edges_number;
 
-  ListGraph<size_t> graph(vertecies_number, GetEdges<size_t>(edges_number));
-  PrintCycle(GetCycle(&graph));
+  ListGraph<size_t> graph(vertexes_number, GetEdges<size_t>(edges_number));
+  Print(TopSort(&graph));
 }
