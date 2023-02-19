@@ -25,7 +25,7 @@ struct DefaultEdge : std::pair<T, T> {
   const T& Finish() const { return BaseClass::second; }
 };
 
-template <typename Vertex = int, typename Edge = DefaultEdge<Vertex>>
+template <typename VType = int, typename EType = DefaultEdge<VType>>
 class AbstractGraph {
  public:
   explicit AbstractGraph(size_t vertices_num, size_t edges_num = 0) :
@@ -34,7 +34,7 @@ class AbstractGraph {
   size_t GetVerticesNumber() const { return vertices_number_; }
   size_t GetEdgesNumber() const { return edges_number_; }
 
-  virtual std::vector<Vertex> GetNeighbours(const Vertex& vertex) = 0;
+  virtual std::vector<VType> GetNeighbours(const VType& vertex) = 0;
  protected:
   size_t vertices_number_ = 0;
   size_t edges_number_ = 0;
@@ -43,53 +43,53 @@ class AbstractGraph {
 
 
 namespace graph {
-template <typename Vertex = int, typename Edge = DefaultEdge<Vertex>>
-class AdjacencyListGraph : public AbstractGraph<Vertex, Edge> {
+template <typename VType = int, typename EType = DefaultEdge<VType>>
+class AdjacencyListGraph : public AbstractGraph<VType, EType> {
  public:
-  AdjacencyListGraph(size_t vertices_num, const std::vector<Edge>& edges) :
-      AbstractGraph<Vertex, Edge>(vertices_num, edges.size()) {
+  AdjacencyListGraph(size_t vertices_num, const std::vector<EType>& edges) :
+      AbstractGraph<VType, EType>(vertices_num, edges.size()) {
     for (const auto& edge : edges) {
       list_[edge.Start()].push_back(edge.Finish());
       list_[edge.Finish()].push_back(edge.Start());
     }
   }
 
-  std::vector<Vertex> GetNeighbours(const Vertex& vertex) final {
+  std::vector<VType> GetNeighbours(const VType& vertex) final {
     return list_[vertex];
   }
 
  private:
-  std::unordered_map<Vertex, std::vector<Vertex>> list_;
+  std::unordered_map<VType, std::vector<VType>> list_;
 };
 }  // namespace graph
 
 
 namespace traverses::visitors {
-template <class Vertex, class Edge>
+template <class VType, class EType>
 class BfsVisitor {
  public:
-  virtual void TreeEdge(const Edge& /*edge*/) = 0;
+  virtual void TreeEdge(const EType& /*edge*/) = 0;
   virtual ~BfsVisitor() = default;
 };
 }  // namespace traverses::visitors
 
 
 namespace traverses::visitors {
-template <class Vertex, class Edge>
-class AncestorBfsVisitor : BfsVisitor<Vertex, Edge> {
+template <class VType, class EType>
+class AncestorBfsVisitor : BfsVisitor<VType, EType> {
  public:
-  virtual void TreeEdge(const Edge& edge) {
+  virtual void TreeEdge(const EType& edge) {
     ancestors_[edge.Finish()] = edge.Start();
   }
 
-  std::unordered_map<Vertex, Vertex> GetMap() const {
+  std::unordered_map<VType, VType> GetMap() const {
     return ancestors_;
   }
 
   virtual ~AncestorBfsVisitor() = default;
 
  private:
-  std::unordered_map<Vertex, Vertex> ancestors_;
+  std::unordered_map<VType, VType> ancestors_;
 };
 }  // namespace traverses::visitors
 
@@ -97,11 +97,11 @@ class AncestorBfsVisitor : BfsVisitor<Vertex, Edge> {
 
 namespace traverses {
 
-template <class Vertex, class Graph, class Visitor>
-void BreadthFirstSearch(Vertex origin_vertex, const Graph &graph,
+template <class VType, class Graph, class Visitor>
+void BreadthFirstSearch(VType origin_vertex, const Graph &graph,
                         Visitor visitor) {
-  std::queue<Vertex> bfs_queue;
-  std::unordered_set<Vertex> visited_vertices;
+  std::queue<VType> bfs_queue;
+  std::unordered_set<VType> visited_vertices;
 
   bfs_queue.push(origin_vertex);
   visited_vertices.insert(origin_vertex);

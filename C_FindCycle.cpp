@@ -3,38 +3,38 @@
 #include <utility>
 #include <unordered_map>
 
-template <typename Vertex, typename Edge = std::pair<Vertex, Vertex>>
+template <typename VType, typename EType = std::pair<VType, VType>>
 class AbstractGraph {
  public:
-  using VertexType = Vertex;
-  using EdgeType = Edge;
+  using VertexType = VType;
+  using EdgeType = EType;
 
   explicit AbstractGraph(size_t vertices_num, size_t edges_num = 0) :
       vertices_number_(vertices_num), edges_number_(edges_num) {}
 
   size_t GetVerticesNumber() const { return vertices_number_; }
 
-  virtual std::vector<Vertex> GetNeighbours(const Vertex& vertex) = 0;
+  virtual std::vector<VType> GetNeighbours(const VType& vertex) = 0;
  protected:
   size_t vertices_number_ = 0;
   size_t edges_number_ = 0;
 };
 
-template <typename Vertex, typename Edge = std::pair<Vertex, Vertex>>
-class ListGraph : public AbstractGraph<Vertex, Edge> {
+template <typename VType, typename EType = std::pair<VType, VType>>
+class ListGraph : public AbstractGraph<VType, EType> {
  public:
-  ListGraph(size_t vertices_num, const std::vector<Edge>& edges) :
-      AbstractGraph<Vertex, Edge>(vertices_num, edges.size()) {
+  ListGraph(size_t vertices_num, const std::vector<EType>& edges) :
+      AbstractGraph<VType, EType>(vertices_num, edges.size()) {
     for (const auto& edge : edges)
       list_[edge.first].push_back(edge.second);
   }
 
-  std::vector<Vertex> GetNeighbours(const Vertex& vertex) final {
+  std::vector<VType> GetNeighbours(const VType& vertex) final {
     return list_[vertex];
   }
 
  private:
-  std::unordered_map<Vertex, std::vector<Vertex>> list_;
+  std::unordered_map<VType, std::vector<VType>> list_;
 };
 
 
