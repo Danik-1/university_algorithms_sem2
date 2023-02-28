@@ -153,7 +153,8 @@ int main() {
   /* пример использования std::accumulate */
   std::cout << "Way size\n";
   std::cout << std::accumulate(
-    path.begin(), path.end(), 0ull, [&dist](unsigned long long acc, const std::pair<size_t, size_t>& edge) {
+    path.begin(), path.end(), 0ull,
+    [&dist](unsigned long long acc, const std::pair<size_t, size_t>& edge) {
       return acc + dist(edge.first, edge.second);
     }
   ) << "\n";
@@ -162,10 +163,12 @@ int main() {
   // docs https://en.cppreference.com/w/cpp/algorithm/accumulate
   std::cout << "Accumulate example matrix sum\n";
   std::cout << std::accumulate(
-    graph.begin(), graph.end(), 0ull, [&dist](unsigned long long acc, const std::vector<size_t>& line) {
+    graph.begin(), graph.end(), 0ull,
+    [&dist](unsigned long long acc, const std::vector<size_t>& line) {
       return acc + 
         std::accumulate(
-           line.begin(), line.end(), 0ull, [&dist](unsigned long long acc, size_t x) {
+           line.begin(), line.end(), 0ull,
+           [&dist](unsigned long long acc, size_t x) {
               return acc + x;
         });
     }
