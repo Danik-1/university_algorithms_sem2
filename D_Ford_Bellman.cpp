@@ -11,17 +11,16 @@ struct WeightedEdge {
  public:
   VType from = 0;
   VType to = 0;
-  int32_t weight = 0; 
-
+  int32_t weight = 0;
 };
 
 template <typename VType = size_t, typename EType = WeightedEdge<VType>>
 class ListGraph {
  public:
   ListGraph(const size_t& vertexes_num, const std::vector<EType>& edges)
-      : vertexes_number_(vertexes_num), edges_(edges),
-        edges_number_(edges.size())
-         {
+      : vertexes_number_(vertexes_num),
+        edges_(edges),
+        edges_number_(edges.size()) {
     for (size_t i = 0; i < vertexes_num; ++i) {
       lists_[i] = std::vector<VType>();
     }
@@ -35,13 +34,9 @@ class ListGraph {
     return lists_[vertex];
   }
 
-  std::vector<EType> GetEdges() const {
-    return edges_;
-  }
+  std::vector<EType> GetEdges() const { return edges_; }
 
-  size_t GetVertexesNumber() const {
-    return vertexes_number_;
-  }
+  size_t GetVertexesNumber() const { return vertexes_number_; }
 
  private:
   std::unordered_map<VType, std::vector<VType>> lists_;
@@ -88,11 +83,11 @@ std::vector<int32_t> FordBellman(const GraphType& graph, const VType& from) {
 template <typename T = size_t>
 void PrintVector(std::vector<T>& vector) {
   for (size_t i = 1; i < vector.size(); ++i) {
-      std::cout << vector[i] << " ";
+    std::cout << vector[i] << " ";
   }
 }
 
-int main() { 
+int main() {
   size_t number_of_vertexes = 0;
   size_t number_of_edges = 0;
   std::cin >> number_of_vertexes >> number_of_edges;
