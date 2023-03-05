@@ -4,12 +4,14 @@
 #include <vector>
 
 template <typename EType = bool,
-          typename Matrix = std::vector<std::vector<EType>> >
+          typename Matrix = std::vector<std::vector<EType>>>
 Matrix ReadEdgesFromMatrix(const int8_t& number_of_vertexes) {
   Matrix edges;
   for (int8_t to = 0; to < number_of_vertexes; ++to) {
     for (int8_t from = 0; from < number_of_vertexes; ++from) {
-      std::cin >> edges[from][to];
+      bool edge;
+      std::cin >> edge;
+      edges[from][to] = edge;
     }
   }
 
