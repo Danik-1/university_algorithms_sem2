@@ -7,14 +7,14 @@
 #include <vector>
 
 template <typename VType = int32_t>
-struct WeightedEdge {
+struct Edge {
  public:
   VType from = 0;
   VType to = 0;
   int32_t weight = 0;
 };
 
-template <typename VType = size_t, typename EType = WeightedEdge<VType>>
+template <typename VType = size_t, typename EType = Edge<VType>>
 class ListGraph {
  public:
   ListGraph(const size_t& vertexes_num, const std::vector<EType>& edges)
@@ -45,7 +45,7 @@ class ListGraph {
   size_t edges_number_ = 0;
 };
 
-template <typename EType = WeightedEdge<int32_t>>
+template <typename EType = Edge<int32_t>>
 std::vector<EType> ReadWeightedEdges(const size_t& number_of_edges) {
   std::vector<EType> edges;
   int32_t from = 0, to = 0, weight = 0;
@@ -91,7 +91,7 @@ int main() {
   size_t number_of_vertexes = 0;
   size_t number_of_edges = 0;
   std::cin >> number_of_vertexes >> number_of_edges;
-  std::vector<WeightedEdge<int32_t>> edges = ReadWeightedEdges(number_of_edges);
+  std::vector<Edge<int32_t>> edges = ReadWeightedEdges(number_of_edges);
 
   ListGraph<int32_t> graph(number_of_vertexes, edges);
 
