@@ -16,12 +16,12 @@ struct std::hash<std::pair<size_t, size_t>> {
 };
 
 // класс абстрактной метрики
-template <typename T>
+template <typename VType>
 class AbstractMetric {
 public:
   // https://en.cppreference.com/w/cpp/language/operators тут есть примеры
   // As member function => why not use virtual?
-  virtual T operator()(size_t from, size_t to) noexcept = 0;
+  virtual VType operator()(size_t from, size_t to) noexcept = 0;
   // virtual destructor - если забыли зачем welcome:
   // https://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
   virtual ~AbstractMetric() = default;
@@ -29,21 +29,21 @@ public:
 
 
 // просто метрика заданая вручную весами ребер:)
-template <typename T>
-class Metric : public AbstractMetric<T> {
+template <typename VType>
+class Metric : public AbstractMetric<VType> {
   public:
     Metric() {}
 
-    void SetDist(size_t from, size_t to, T dist) {
+    void SetDist(size_t from, size_t to, VType dist) {
       dist_[{std::min(from, to), std::max(from, to)}] = dist;
     }
 
-    T operator()(size_t from, size_t to) noexcept override {
+    VType operator()(size_t from, size_t to) noexcept override {
       return dist_[{std::min(from, to), std::max(from, to)}];
     }
 
   private:
-    std::unordered_map<std::pair<size_t, size_t>, T> dist_;
+    std::unordered_map<std::pair<size_t, size_t>, VType> dist_;
 
 };
 
@@ -63,24 +63,24 @@ class EuclidianMetric : public AbstractMetric<T> {
 
 }; */
 
-template <typename T>
+template <typename VType>
 std::vector<std::pair<size_t, size_t>> FindNearestWay(
   const std::vector<std::vector<size_t>>& graph,
-  AbstractMetric<T>& metric,
+  AbstractMetric<VType>& metric,
   size_t from, 
   size_t to
 ) {
   // массив distances 
-  std::vector<T> distances(graph.size(), std::numeric_limits<T>::max());
+  std::vector<VType> distances(graph.size(), std::numeric_limits<VType>::max());
   // массив предков - для восстановления пути
-  std::vector<T> parents(graph.size(), std::numeric_limits<T>::max());
-  distances[from] = T(); //  
+  std::vector<VType> parents(graph.size(), std::numeric_limits<VType>::max());
+  distances[from] = VType(); //  
 
   // std::priotity queue - просто бинарная куча(проходили в пред семестре)
   std::priority_queue<
-    std::pair<T, size_t>, // элементы
-    std::vector<std::pair<T, size_t>>, // базовый контейнер
-    std::greater<std::pair<T, size_t>> // компаратор
+    std::pair<VType, size_t>, // элементы
+    std::vector<std::pair<VType, size_t>>, // базовый контейнер
+    std::greater<std::pair<VType, size_t>> // компаратор
   > queue; 
     
   // https://en.cppreference.com/w/cpp/container/priority_queue/emplace 
@@ -100,7 +100,7 @@ std::vector<std::pair<size_t, size_t>> FindNearestWay(
       continue;
      }
      for (auto& neighbour : graph[now_near]) {
-      T distance = metric(now_near, neighbour);
+      VType distance = metric(now_near, neighbour);
       // пробуем улучшить ответ
       if (distances[now_near] + distance < distances[neighbour]) {
         distances[neighbour] = distances[now_near] + distance;

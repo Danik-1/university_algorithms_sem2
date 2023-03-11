@@ -8,7 +8,6 @@
 
 template <typename VType = int32_t>
 struct WeightedEdge {
- public:
   VType from = 0;
   VType to = 0;
   int32_t weight = 0; 
@@ -53,14 +52,14 @@ class ListGraph {
 };
 
 template <typename EType = WeightedEdge<int32_t>>
-std::vector<EType> ReadMatrixEdges(const size_t& number_of_vertexes) {
+std::vector<EType> ReadMatrixEdges(const int32_t& number_of_vertexes) {
   std::vector<EType> edges;
   int32_t weight = 0;
-  for (size_t to = 1; to < number_of_vertexes + 1; ++to) {
-    for (size_t from = 1; from < number_of_vertexes + 1; ++from) {
+  for (int32_t to = 1; to < number_of_vertexes + 1; ++to) {
+    for (int32_t from = 1; from < number_of_vertexes + 1; ++from) {
       std::cin >> weight;
       if (weight < 100'000) {
-        edges.push_back({(int32_t)from, (int32_t)to, weight});
+        edges.push_back({from, to, weight});
       }
     }
   }
@@ -69,22 +68,20 @@ std::vector<EType> ReadMatrixEdges(const size_t& number_of_vertexes) {
 }
 
 template <typename VType = int32_t, typename GraphType = ListGraph<VType>>
-std::vector<VType> FindNegativeCycle(const GraphType& graph, const VType& from) {
+std::vector<VType> FindNegativeCycle(const GraphType& graph,
+                                     const VType& from) {
   std::vector<VType> cycle;
   size_t vertexes_number = graph.GetVertexesNumber();
   std::vector<int32_t> distances(vertexes_number + 1, 100'000);
   distances[from] = 0;
-  for (size_t i = 1; i <= vertexes_number; ++i) {
-    bool distance_decreased = false;
-    for (const auto& edge : graph.GetEdges()) {
-      if (distances[edge.from] != 100'000) {
-        if (distances[edge.to] > distances[edge.from] + edge.weight) {
-          distances[edge.to] = distances[edge.from] + edge.weight;
-          distance_decreased = true;
-        }
-      }
-      if (i == vertexes_number && distance_decreased) {
-        cycle.push_back(edge.to);
+  for (size_t i = 1; i < vertexes_number + 1; ++i) {
+    for (const auto& [from, to, weight] : graph.GetEdges()) {
+      if (distances[from] < 100'000 &&
+          distances[to] > distances[from] + weight) {
+          distances[to] = distances[from] + weight;
+          if (i == vertexes_number) {
+            cycle.push_back(to);
+          }
       }
     }
   }
@@ -92,8 +89,8 @@ std::vector<VType> FindNegativeCycle(const GraphType& graph, const VType& from) 
   return cycle;
 }
 
-template <typename T = int32_t>
-void PrintCycle(const std::vector<T>& cycle) {
+template <typename VType = int32_t>
+void PrintCycle(const std::vector<VType>& cycle) {
   std::cout << cycle.size() + 1 << '\n';
   for (const auto& element : cycle) {
     std::cout << element << ' ';
@@ -113,7 +110,7 @@ void PrintAnswer(std::vector<VType>& cycle) {
 }
 
 int main() { 
-  size_t number_of_vertexes = 0;
+  int32_t number_of_vertexes = 0;
   std::cin >> number_of_vertexes;
 
   std::vector<WeightedEdge<int32_t>> edges 

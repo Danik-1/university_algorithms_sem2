@@ -80,8 +80,8 @@ std::vector<int32_t> FordBellman(const GraphType& graph, const VType& from) {
   return distances;
 }
 
-template <typename T = size_t>
-void PrintVector(std::vector<T>& vector) {
+template <typename VType = size_t>
+void PrintVector(std::vector<VType>& vector) {
   for (size_t i = 1; i < vector.size(); ++i) {
     std::cout << vector[i] << " ";
   }
